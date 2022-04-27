@@ -1,0 +1,49 @@
+[
+    {
+        "area": "upper body",
+        "groups": [
+            {
+                "group": "back",
+                "ex": ["bex1", "bex2", "bex3", "bex4", "bex5"]
+            },
+            {
+                "group": "chest",
+                "ex": ["cex1", "cex2", "cex3", "cex4", "cex5"]
+            },
+            {
+                "group": "biceps",
+                "ex": ["b2ex1", "b2ex2", "b2ex3", "b2ex4", "b2ex5"]
+            },
+            {
+                "group": "triceps",
+                "ex": ["tex1", "tex2", "tex3", "tex4", "tex5"]
+            }
+        ]
+    },
+    {
+        "area": "lower body",
+        "groups": [
+            {
+                "group": "quads",
+                "ex": ["qex1", "qex2", "qex3", "qex4", "qex5"]
+            },
+            {
+                "group": "glutes",
+                "ex": ["gex1", "gex2", "gex3", "gex4", "gex5"]
+            },
+            {
+                "group": "abs",
+                "ex": ["aex1", "aex2", "aex3", "aex4", "aex5"]
+            }
+        ]
+    },
+    {
+        "area": "jogging",
+        "groups": [
+            {
+                "group": "route",
+                "ex": ["r1", "r2", "r3"]
+            }
+        ]
+    }
+]
