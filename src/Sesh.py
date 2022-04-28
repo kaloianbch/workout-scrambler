@@ -1,8 +1,9 @@
-import json, os, random
+import json, os, random, copy, datetime
 
 
 #################### PARAM ####################
 EX_PER_GROUP = 2
+
 
 class Sesh:
     def __init__(self, *args):
@@ -12,34 +13,36 @@ class Sesh:
         if 'current_sesh' not in self.prog_data:
             self.scramble()
         else:
-            print("Incomplete session exits, using it.")
+            print("Incomplete session exits, using it.\n")
             self.area = self.prog_data['current_sesh']['area']
             self.ex_list = self.prog_data['current_sesh']['ex_list']
 
 
     # Print method
     def print(self):
-        print(self.area)
-        print(self.ex_list)
+        print('Today\'s session is ' + self.area.upper() +'.\nHere are your excersises:')
+        ex_str = ''
+        for ex in self.ex_list:
+            ex_str += '- ' + ex['ex'] + '\n'
+        print(ex_str)
+
 
     # Load or create new program data if not present
     def get_prog_data(self):
             scrambler_data = {}
 
             if  os.path.isfile(self.res_path + '/scrambler_data.json'):
-                print('Reading scrambler data file...')
+                print('Reading scrambler data file...\n')
 
                 with open(self.res_path + '/scrambler_data.json', 'r') as file:
                     scrambler_data = json.load(file)
             else:
-                print('No scrambler data present, creating new file...')
+                print('No scrambler data present, creating new file...\n')
 
                 scrambler_data = self.create_new_prog_data_file()
-                with open(self.res_path + '/scrambler_data.json', 'w') as newfile:
-                    newfile.write(json.dumps(scrambler_data, indent = 4))
-
             return scrambler_data
     
+
     # Creates program data file
     def create_new_prog_data_file(self):
         ex_list = []
@@ -61,6 +64,9 @@ class Sesh:
                 new_data['master_ex_list'].append(group)
 
         new_data['unused_ex_list'] = new_data['master_ex_list'].copy() 
+
+        with open(self.res_path + '/scrambler_data.json', 'w') as newfile:
+            newfile.write(json.dumps(new_data, indent = 4))   
 
         return new_data
 
@@ -96,7 +102,7 @@ class Sesh:
                     else:
                         ex_set = self.reset_and_select_ex(1, self.prog_data, unused_list, i)
                     
-                    ex_list.append({'ex': ex_set[0], 'time': 0, 'group': unused_list[i]['group']})
+                    ex_list.append({'ex': ex_set[0], 'time': '0:00', 'distance(km)': 0 , 'group': unused_list[i]['group']})
                     break
 
                 if len(unused_list[i]['ex']) > EX_PER_GROUP:
@@ -105,24 +111,24 @@ class Sesh:
                     ex_set = self.reset_and_select_ex(EX_PER_GROUP, self.prog_data, unused_list, i)
 
                 for ex in ex_set:
-                    ex_list.append({'ex': ex, 'rep': 0, 'rep_qty': [], 'weight(kg)': 0, 'group': unused_list[i] ['group']})
+                    ex_list.append({'ex': ex, 'rep_qty': 0, 'rep': [], 'weight(kg)': 0, 'group': unused_list[i] ['group']})
 
         #set generated data and save it
-        print('New session created!')
+        print('New session created!\n')
         self.area = sesh_area
         self.ex_list = ex_list
         self.prog_data['current_sesh'] = {'area': sesh_area, 'ex_list': ex_list}
-        with open(self.res_path + '/scrambler_data.json', 'w') as newfile:
-            newfile.write(json.dumps(self.prog_data, indent = 4))   
+        self.save()
 
 
     def reset_and_select_ex(self, ex_amount, unused_list, i):
-        print('Exercise list exhausted for: ' + unused_list[i]['group'] + ', resetting...')
+        print('Exercise list exhausted for: ' + unused_list[i]['group'] + ', resetting...\n')
         if (len(unused_list[i])) == 1 and ex_amount == 1:
             return [unused_list[i]['ex'][0]]
 
         unused_list[i]['ex'] = self.prog_data['master_ex_list'][i]['ex'].copy()
         return self.select_ex(unused_list[i]['ex'], ex_amount)
+
 
     # return random subset of excerse set and list of entries used
     def select_ex(self, ex_set, ex_amount):
@@ -142,6 +148,25 @@ class Sesh:
 
         return return_list
     
+
     def save(self):
-         with open(self.res_path + '/scrambler_data.json', 'w') as newfile:
-            newfile.write(json.dumps(self.self.prog_data, indent = 4))   
+        print('Saving scrambler data...\n')
+        with open(self.res_path + '/scrambler_data.json', 'w') as newfile:
+            newfile.write(json.dumps(self.prog_data, indent = 4))   
+    
+    # Move current sesh data to previous sesh list
+    def complete_sesh(self):
+        if 'prev_sesh_list' not in self.prog_data:
+            self.prog_data['prev_sesh_list'] = []
+
+        self.prog_data['current_sesh']['timestamp'] = datetime.datetime.timestamp(datetime.datetime.now())
+        print("Session completed on[" + str(datetime.datetime.now()) + '], moving to archive...\n')
+        self.prog_data['prev_sesh_list'].append(copy.deepcopy(self.prog_data['current_sesh']))
+        del self.prog_data['current_sesh']
+        
+        self.save()
+    
+    def delete_curr_sesh(self):
+        print('Clearning current session data...\n')
+        del self.prog_data['current_sesh']
+        self.save()
