@@ -1,8 +1,12 @@
-import os
+import os, random
 from Sesh import Sesh
 
 def positive_reinforcment_phrase():
-    return 'uh'
+    qoutes_list = []
+    with open(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'res')) + '/qoutes.txt', 'r', encoding='utf-8') as file:
+        for line in file:
+            qoutes_list.append(line)
+    return qoutes_list[random.randrange(len(qoutes_list))]
 
 def data_input_jogging(sesh):
     next_ex = False
