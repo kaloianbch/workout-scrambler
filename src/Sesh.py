@@ -100,7 +100,7 @@ class Sesh:
                     if len(unused_list[i]['ex']) > 1:
                         ex_set = self.select_ex(unused_list[i]['ex'], 1)
                     else:
-                        ex_set = self.reset_and_select_ex(1, self.prog_data, unused_list, i)
+                        ex_set = self.reset_and_select_ex(1, unused_list, i)
                     
                     ex_list.append({'ex': ex_set[0], 'time': '0:00', 'distance(km)': 0 , 'group': unused_list[i]['group']})
                     break
@@ -108,7 +108,7 @@ class Sesh:
                 if len(unused_list[i]['ex']) > EX_PER_GROUP:
                     ex_set = self.select_ex(unused_list[i]['ex'], EX_PER_GROUP)
                 else:
-                    ex_set = self.reset_and_select_ex(EX_PER_GROUP, self.prog_data, unused_list, i)
+                    ex_set = self.reset_and_select_ex(EX_PER_GROUP, unused_list, i)
 
                 for ex in ex_set:
                     ex_list.append({'ex': ex, 'rep_qty': 0, 'rep': [], 'weight(kg)': 0, 'group': unused_list[i] ['group']})
