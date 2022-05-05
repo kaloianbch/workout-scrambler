@@ -2,7 +2,7 @@ import json, os, random, copy, datetime
 
 
 #################### PARAM ####################
-EX_PER_GROUP = 2
+EX_PER_GROUP = 1
 
 
 class Sesh:
@@ -82,7 +82,9 @@ class Sesh:
         #rule 1 code
         if 'prev_sesh_list' in self.prog_data:
             area_list = self.prog_data['area_list'].copy()
-            for i in range(len(area_list) - 1):
+            for i in range(len(area_list)):
+                print(area_list[i])
+                print(self.prog_data['prev_sesh_list'][len(self.prog_data['prev_sesh_list']) - 1]['area'])
                 if area_list[i] == self.prog_data['prev_sesh_list'][len(self.prog_data['prev_sesh_list']) - 1]['area']:
                     del area_list[i]
             sesh_area = area_list[random.randrange(len(area_list))]
